@@ -29,9 +29,10 @@
           const fileInput = document.getElementById('pdfInput');
           const file = fileInput.files[0];
           if (file) {
+            const filename = file.name;
             const arrayBuffer = await file.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
-            pyodide.FS.writeFile('/uploaded_file', uint8Array);
+            pyodide.FS.writeFile(`/${filename}`, uint8Array);
             console.log('PDF file loaded into Pyodide');
             // You can now use the PDF file in Pyodide
             // For example, you can use Pyodide to read the file and process it
@@ -40,7 +41,7 @@
               from markitdown import MarkItDown
               
               markitdown = MarkItDown()
-              result = markitdown.convert("/uploaded_file")
+              result = markitdown.convert("/${filename}")
               result.text_content
             `)
 
