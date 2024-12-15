@@ -16,6 +16,7 @@ import { Toaster } from "react-hot-toast";
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: styles },
   { rel: "stylesheet", href: radixCSS },
+  { rel: 'icon', href: 'favicon.ico', type: 'image/x-icon' }
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
