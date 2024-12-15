@@ -10,5 +10,6 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
+  base: process.env.NODE_ENV === 'production' ? '/markitdown-ui/' : "/",
   plugins: [reactRouter(), tsconfigPaths()],
 });
