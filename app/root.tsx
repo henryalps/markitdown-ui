@@ -9,6 +9,8 @@ import {
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import radixCSS from "@radix-ui/themes/styles.css?url";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -21,7 +23,7 @@ export const links: Route.LinksFunction = () => [
   //   rel: "stylesheet",
   //   href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   // },
-  { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: radixCSS },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -32,9 +34,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script src="/py/pyodide.js"/>
       </head>
       <body>
-        {children}
+        <Theme
+          accentColor="violet"
+          grayColor="sand"
+          radius="large"
+          appearance="dark"
+          scaling="95%"
+        >
+          {children}
+          {/* <ThemePanel /> */}
+        </Theme>
         
         <ScrollRestoration />
         <Scripts />
@@ -64,7 +76,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className="container p-4 pt-16 mx-auto">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (

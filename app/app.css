@@ -1,1 +1,2 @@
-@import "nes-ui-react";
+@tailwind components;
+@tailwind utilities;
