@@ -5,6 +5,7 @@ export function meta(metaArgs: Route.MetaArgs) {
   return [
     { title: "Markitdown UI" },
     { name: "description", content: "Covert anything to Markdown" },
+    { name: "og:image", content: "https://brunojppb.github.io/markitdown-ui/cover.jpg" },
   ];
 }
 
