@@ -143,8 +143,8 @@ export default function ConvertForm() {
           directly on your machine.
         </Text>
         <Text size="2" color="plum">
-          Built with ❤️ by <Link href="#">Bruno Paulino</Link> • This project is{" "}
-          <Link href="#">open-source</Link>.
+          Built with ❤️ by <Link href="https://github.com/brunojppb">Bruno Paulino</Link> • This project is{" "}
+          <Link href="https://github.com/brunojppb/markitdown-ui/">open-source</Link>.
         </Text>
       </Flex>
       <Flex
