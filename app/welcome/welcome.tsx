@@ -1,20 +1,23 @@
-import {
-  DownloadIcon,
-  FileIcon,
-  UpdateIcon,
-  UploadIcon,
-} from "@radix-ui/react-icons";
+import { DownloadIcon, UpdateIcon, UploadIcon } from "@radix-ui/react-icons";
 import {
   Flex,
   Text,
   Button,
   Container,
   Heading,
-  Box,
-  Link,
   Table,
+  Link,
 } from "@radix-ui/themes";
 import { useCallback, useRef, useState, type ChangeEvent } from "react";
+import toast from "react-hot-toast";
+
+const mimeTypePPTX =
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+const mimeTypeDOCX =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const mimeTypePDF = "application/pdf";
+const mimeTypeHTML = "text/html";
+const mimeTypeCSV = "text/csv";
 
 export function Welcome() {
   return (
@@ -46,7 +49,7 @@ export default function ConvertForm() {
     if (e.target.files) {
       const newFiles = [];
       for (let i = 0; i < e.target.files.length; i++) {
-        const file = e.target.files[0];
+        const file = e.target.files[i];
         newFiles.push(file);
       }
       setFiles(newFiles);
@@ -89,6 +92,14 @@ export default function ConvertForm() {
           newFiles.push([file.name, blob]);
         }
         setConvertedFiles(newFiles);
+        toast.success("Files converted successfully!", {
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+          duration: 3000
+        });
       } catch (error: unknown) {
         console.log("Could not convert file", error);
       } finally {
@@ -120,18 +131,31 @@ export default function ConvertForm() {
         type="file"
         id="upload-input"
         ref={inputRef}
+        multiple
+        accept={`${mimeTypeCSV},${mimeTypeDOCX},${mimeTypeHTML},${mimeTypePDF},${mimeTypePPTX}`}
         style={{ visibility: "hidden" }}
         onChange={onFileInputChange}
       />
-      <Heading size="8">Convert anything to Markdown</Heading>
+      <Heading size="9">Convert anything to Markdown</Heading>
+      <Flex direction="column" gap="2">
+        <Text size="4" color="plum" highContrast weight="bold">
+          Convert PDFs, HTML pages, DOCX and more to Markdown. All offline,
+          directly on your machine.
+        </Text>
+        <Text size="2" color="plum">
+          Built with ❤️ by <Link href="#">Bruno Paulino</Link> • This project is{" "}
+          <Link href="#">open-source</Link>.
+        </Text>
+      </Flex>
       <Flex
         direction="column"
         justify="center"
         align="center"
-        style={{ borderStyle: "dashed" }}
         minHeight="200px"
       >
-        <UploadIcon width="50" height="50" /> <Text>Drop your files here</Text>
+        <Button onClick={onOpenFiles} variant="outline" size="4">
+          <UploadIcon /> Open files
+        </Button>
       </Flex>
       {files.length > 0 && (
         <Table.Root>
@@ -143,15 +167,15 @@ export default function ConvertForm() {
           </Table.Header>
 
           <Table.Body>
-            {files.map((file) => {
+            {files.map((file, index) => {
               const maybeBlob = convertedFiles.find(
                 ([filename, _]) => filename === file.name
               );
               if (maybeBlob) {
                 return (
-                  <Table.Row key={file.name}>
+                  <Table.Row key={`${file.name}-${index}`}>
                     <Table.RowHeaderCell>{file.name}</Table.RowHeaderCell>
-                    <Table.Cell>
+                    <Table.Cell width="300px">
                       <Button
                         variant="soft"
                         onClick={(e) => {
@@ -159,14 +183,14 @@ export default function ConvertForm() {
                           download(file.name, maybeBlob[1]);
                         }}
                       >
-                        <DownloadIcon /> Download converted file
+                        <DownloadIcon /> Download markdown
                       </Button>
                     </Table.Cell>
                   </Table.Row>
                 );
               }
               return (
-                <Table.Row key={file.name}>
+                <Table.Row key={`${file.name}-${index}`}>
                   <Table.RowHeaderCell>{file.name}</Table.RowHeaderCell>
                   <Table.Cell>Pending</Table.Cell>
                 </Table.Row>
@@ -177,13 +201,11 @@ export default function ConvertForm() {
       )}
 
       <Flex justify="between">
-        <Button onClick={onOpenFiles} variant="outline">
-          <UploadIcon /> Open files
-        </Button>
         <Button
           onClick={convertFiles}
           disabled={isLoadingPython || isConverting}
           loading={isLoadingPython || isConverting}
+          style={{ visibility: files.length > 0 ? "inherit" : "hidden" }}
         >
           <UpdateIcon /> Convert files
         </Button>
@@ -198,7 +220,7 @@ let pyodide = null;
 async function installPython() {
   // @ts-expect-error: The Pyodide library is globally available
   if (pyodide) {
-    return pyodide
+    return pyodide;
   }
   console.log("loading pyodide");
   // @ts-expect-error: The Pyodide library is globally available
