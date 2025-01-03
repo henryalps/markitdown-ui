@@ -45,7 +45,8 @@ async function installPython() {
   pyodide = await window.loadPyodide();
   await pyodide.loadPackage("micropip");
   const micropip = pyodide.pyimport("micropip");
-  await micropip.install("markitdown");
+  console.log("installing packages");
+  await micropip.install("markitdown==0.0.1a2");
 
   return pyodide;
 }
